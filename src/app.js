@@ -24,6 +24,15 @@ app.use(cookieParser())
 // You give each guest an invitation as they arrive. These invitations contain information like their name, dietary preferences, and any other special requests. Similarly, when a client interacts with your website, your server sends a small piece of data called a cookie to the client's browser. This cookie contains information like session identifiers, user preferences, or authentication tokens.
 // Keeping Track of Guests (Parsing Cookies): As guests mingle and enjoy the party, you keep track of who's attending and their preferences based on the invitations they received. Similarly, your server uses middleware like cookieParser() to parse incoming cookies from client requests. This middleware extracts the relevant information from cookies, allowing your server to understand and process them.
 
+
+import userRouter from './routes/user.routes.js'
+
+
+app.use("/api/v1/users", userRouter)
+
+// http://localhost:8000/users/register  "this url "
+
+
 export {app} 
 // Exporting is like packaging up your work to share with others. Here, we're making our Express application available for other parts of our code or other files to use.
 
