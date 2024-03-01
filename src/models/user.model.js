@@ -86,9 +86,9 @@ const userSchema = new Schema({
 // Payload: Data to be included in the token.
 // Secret: A secret key used to sign the token. This key should be kept secret and securely stored.
 // Options: Additional options such as expiration time (expiresIn) for the token. The expiration time is set based on the value of process.env.ACCESS_TOKEN_EXPIRY, which should be configured in your environment variables.
+// we can create our own methods like here we created generateRefreshToken 
 
-
-    userSchema.Schema.methods.generateRefreshToken = function(){
+    userSchema.methods.generateRefreshToken = function(){
         return jwt.sign(
          {
             _id: this._id,
