@@ -253,10 +253,73 @@ const logoutUser = asyncHandler(async(req,res)=>{
     
     
     })
+
+// This function refreshes the access token using the refresh token provided by the client.
+    const refreshAccessToken = asyncHandler(async(req,res)=>{
+        // get refresh token from cookie
+          // find user by id
+          // check if refresh token is valid
+          // generate new access token
+          // send new access token in response
+          // update refresh token in db
+          // return response
+         const incomingRefreshToken =   req.cookies.refreshToken || req.body.refreshToken
+      // Extract the refresh token from cookies or request body.
+         if (!incomingRefreshToken) {
+          throw new ApiError(401,"Unauthorized request")
+         }  // If no refresh token provided, throw an unauthorized request error.
+      
+       try {
+         // Verify the incoming refresh token using the secret key.
+           const decodedToken =- jwt.verify(incomingRefreshToken,process.env.REFRESH_TOKEN_SECRET) // this code is written bu Satyam kanojiya 
+           const user = await User.findById(decodedToken?._id)
+          // Find the user associated with the decoded token.
+           if (!user) {
+             throw new ApiError(401,"Invalid refresh Token")
+            }
+         // Ensure the incoming refresh token matches the one stored in the user document.
+         if (incomingRefreshToken!== user.refreshToken) {
+             throw new ApiError(401,"refresh Token is expired or used")
+         }
+
+         const options ={
+             httpOnly :true,
+             secure :true
+         }
+         
+           // Generate a new access token and refresh token pair.
+         
+         const {accessToken,newRefreshToken} = await generateAccessAndRefreshToken(user._id)
+//Imagine you have a system where users log in with a username and password, and upon successful login, they receive both an access token and a refresh token.
+// The access token allows them to access protected resources on your server, but it has a limited lifespan.
+// The refresh token, on the other hand, has a longer lifespan and can be used to obtain a new access token without requiring the user to log in again.
+// This function simulates the process of refreshing the access token using the refresh token, ensuring continued access to protected resources for the user.
+         return res
+         .status(200)
+         .cookie("accessToken",accessToken,options)
+         .cookie("refreshToken",newRefreshToken,options)
+         .json(
+             new ApiResponse(200,{},"Access Token refreshed successfully")
+         )
+       } catch (error) {
+          throw new ApiError(401,error?.message || "Invalid refresh Token")
+       }
+      
+      
+      })
+
+      
+      const options ={
+        httpOnly :true,
+        secure :true
+    }
+
+      
     
 
 export {
     registerUser,
     loginUser,
     logoutUser,
+    refreshAccessToken,
 }
