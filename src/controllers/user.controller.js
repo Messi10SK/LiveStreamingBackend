@@ -308,11 +308,34 @@ const logoutUser = asyncHandler(async(req,res)=>{
       
       })
 
-      
-      const options ={
-        httpOnly :true,
-        secure :true
-    }
+
+
+    const changeCurrentPassword  = asyncHandler(async(req,res)=>{
+          // get user id from req.user
+    // get old password from req.body
+    // get new password from req.body
+    // find user by id
+    // check if old password is correct
+    // update password
+    // return response
+
+    const {oldPassword,newPassword} = req.body
+
+    const user = await User.findById(req.user?._id)
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
+
+if(!isPasswordCorrect){
+    throw new ApiError(401,"Invalid Old Password")
+}
+
+user.password = newPassword
+await user.save({validateBeforeSave:false})
+// The line await user.save({ validateBeforeSave: false }) is used in a Node.js application with MongoDB and Mongoose. It saves the user document to the database, bypassing validation checks defined in the Mongoose schema. This approach can be useful when data has already been validated elsewhere or for performance reasons. However, it's important to ensure data integrity and validity when skipping validation. The option { validateBeforeSave: false } instructs Mongoose not to perform validation before saving the document.
+
+return res
+.status(200)
+.json( new ApiResponse(200,{},"Password changed successfully"))
+})
 
       
     
@@ -322,4 +345,5 @@ export {
     loginUser,
     logoutUser,
     refreshAccessToken,
+    changeCurrentPassword,
 }
